@@ -1,7 +1,7 @@
 import enum
 from sqlalchemy import Column, ForeignKey, Integer, String, Enum
 from sqlalchemy.orm import relationship
-from app.models.base import Base
+from app.models.db.base import Base
 
 
 class ExerciseCategory(enum.Enum):

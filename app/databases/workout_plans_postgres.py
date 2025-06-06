@@ -2,8 +2,9 @@ from typing import Optional
 
 from fastapi import HTTPException, status
 from app.databases.postgres import PostgresRepo
-from app.models.exercises import Exercise
-from app.models.workout_plans import WorkoutExercise, WorkoutsPlan
+from app.models.db.exercises import Exercise
+from app.models.db.workout_plans import WorkoutExercise, WorkoutsPlan
+from app.models.req_model import CreateWorkoutPlanReq
 from settings import PG_DB_HOST, PG_DB_NAME, PG_DB_PASS, PG_DB_PORT, PG_DB_USER
 from datetime import datetime
 
@@ -43,25 +44,25 @@ class WorkoutPostgresRepo(PostgresRepo):
     def create_workout_plan(
         self,
         user_id: int,
-        request_body: dict
+        request_body: CreateWorkoutPlanReq
     ):
         with self.SessionLocal() as s:
             new_plan = WorkoutsPlan(
-                name=request_body.get("name"),
-                description=request_body.get("description"),
-                start_at=request_body.get("start_at"),
-                stop_at=request_body.get("stop_at"),
+                name=request_body.name,
+                description=request_body.description,
+                start_at=request_body.start_at,
+                stop_at=request_body.stop_at,
                 created_by=user_id,
                 exercise_list=[],
                 created_at=datetime.now()
             )
-            exercise_data = request_body.get("exercise_list")
+            exercise_data = request_body.exercise_list
             if exercise_data:
                 for ex in exercise_data:
                     new_plan.exercise_list.append(
                         WorkoutExercise(
-                            exec_id=ex["exec_id"],
-                            selected_option_id=ex.get("selected_option_id")
+                            exec_id=ex.exec_id,
+                            selected_option_id=ex.selected_option_id
                         )
                     )
             s.add(new_plan)
@@ -160,7 +161,7 @@ class WorkoutPostgresRepo(PostgresRepo):
                 if wp_id not in grouped:
                     grouped[wp_id] = {
                         "workout_plan": {
-                            "id": wp.wp_id,
+                            "wp_id": wp.wp_id,
                             "name": wp.name,
                             "created_at": wp.created_at.isoformat(),
                             "is_completed": wp.is_completed
@@ -168,24 +169,7 @@ class WorkoutPostgresRepo(PostgresRepo):
                         "exercises": []
                     }
                 grouped[wp_id]["exercises"].append({
+                    "exec_id": ex.exec_id,
                     "name": ex.name
                 })
-            return list(grouped.values())
-
-
-if __name__ == '__main__':
-    # python -m app.databases.workout_plans_postgres
-    db_repo = WorkoutPostgresRepo()
-    request_body = {"name": "test_real",
-                    "description": "11111",
-                    "schedule_at": "2020-10-08T13:30:00.000Z",
-                    }
-    # result = db_repo.list_all_exercise(exercise_type=["STRENGTH"])
-    # result = db_repo.list_workout_plan(user_id=4)
-    # result = db_repo.create_workout_plan(user_id=7)
-    # result = db_repo.update_workout_plan()
-    # result = db_repo.delete_workout_plan(plan_id=5)
-    result = db_repo.generate_reports(user_id=7)
-    for r in result:
-        print(r.__dict__)
-    print(" xxx C O M P L E T E D xxx ")
+            return grouped

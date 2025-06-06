@@ -3,8 +3,7 @@ import sqlalchemy.exc
 from sqlalchemy.orm import sessionmaker
 from settings import PG_DB_HOST, PG_DB_NAME, PG_DB_PASS, PG_DB_PORT, PG_DB_USER
 
-from app.models import users, workout_plans, exercises
-from app.models.base import Base
+from app.models.db.base import Base
 
 class PostgresRepo:
     def __init__(

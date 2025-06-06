@@ -2,7 +2,7 @@ from datetime import datetime
 from typing import List, Optional
 from pydantic import BaseModel
 
-from app.models.exercises import ExerciseCategory
+from app.models.db.exercises import ExerciseCategory
 
 
 class ExerciseOption(BaseModel):

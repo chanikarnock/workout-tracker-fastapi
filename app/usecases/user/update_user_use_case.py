@@ -8,5 +8,5 @@ class UpdateUserUsecase():
         pass
 
     def execute(self, user_id: int, request_body: dict):
-        self.db_repo.update_user(user_id=user_id, request_body=request_body)
+        self.db_repo.update_user(user_id=user_id, request_body=dict(request_body))
         return {"message": "Update success!"}

@@ -6,7 +6,7 @@ from datetime import datetime, timedelta, timezone
 from pydantic import BaseModel
 
 from app.interfaces.user_controller import UserController
-from app.models.users import User
+from app.models.db.users import User
 from settings import SECRET_KEY
 import jwt
 from jwt.exceptions import InvalidTokenError

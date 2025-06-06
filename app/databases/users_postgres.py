@@ -1,6 +1,6 @@
 from fastapi import HTTPException, status
 from app.databases.postgres import PostgresRepo
-from app.models.users import User
+from app.models.db.users import User
 from settings import PG_DB_HOST, PG_DB_NAME, PG_DB_PASS, PG_DB_PORT, PG_DB_USER
 
 
@@ -67,16 +67,3 @@ class UsersPostgresRepo(PostgresRepo):
             s.delete(target_user)
             s.commit()
         return
-
-
-if __name__ == '__main__':
-    # python -m app.databases.user_postgres
-    db_repo = UsersPostgresRepo(
-        db_host=PG_DB_HOST,
-        db_port=PG_DB_PORT,
-        db_username=PG_DB_USER,
-        db_password=PG_DB_PASS,
-        db_name=PG_DB_NAME,
-    )
-    result = db_repo.find_user_by_email(email="testxxx@gmail.com")
-    print(f"==>> result: {result}")

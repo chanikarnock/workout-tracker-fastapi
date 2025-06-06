@@ -1,9 +1,9 @@
 from sqlalchemy import Boolean, Column, DateTime, ForeignKey, Integer, String
 from sqlalchemy.orm import relationship
 
-from app.models.users import User
-from app.models.exercises import Exercise, ExerciseOption
-from app.models.base import Base
+from app.models.db.users import User
+from app.models.db.exercises import Exercise, ExerciseOption
+from app.models.db.base import Base
 
 
 
@@ -17,8 +17,10 @@ class WorkoutsPlan(Base):
     is_completed = Column(Boolean, default=False)
     completed_at = Column(DateTime, nullable=True)
     created_at = Column(DateTime)
-    created_by = Column(Integer, ForeignKey(User.id))
+    created_by = Column(Integer, ForeignKey("users.id", ondelete="CASCADE"))
     exercise_list = relationship("WorkoutExercise", back_populates="workout", cascade="all, delete-orphan")
+    
+    user = relationship("User", back_populates="workout_plans")
 
 
 class WorkoutExercise(Base):

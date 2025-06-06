@@ -3,7 +3,8 @@ from fastapi import APIRouter, Depends, HTTPException, Request, status
 from datetime import timedelta
 
 from app.interfaces.user_controller import UserController
-from app.models.users import User
+from app.models.req_model import RegisterUserReq, LoginUserReq, UpdateUserReq
+from app.models.db.users import User
 from app.routers.dependencies import Token, create_access_token, get_current_active_user
 
 
@@ -12,13 +13,13 @@ ACCESS_TOKEN_EXPIRE_MINUTES = 100
 
 
 @user_router.post("/register")
-def register_user(request: Request, request_body: dict):
+def register_user(request: Request, request_body: RegisterUserReq):
     result = UserController().register_user(request_body=request_body)
     return result
 
 
 @user_router.post("/login")
-def login(request: Request, request_body: dict):
+def login(request: Request, request_body: LoginUserReq):
     user = UserController().login_user(request_body=request_body)
     if not user:
         raise HTTPException(
@@ -36,7 +37,7 @@ def logout(request: Request, current_user: Annotated[User, Depends(get_current_a
 
 
 @user_router.post("/update")
-def update_user(request: Request, current_user: Annotated[User, Depends(get_current_active_user)], request_body: dict):
+def update_user(request: Request, current_user: Annotated[User, Depends(get_current_active_user)], request_body: UpdateUserReq):
     return UserController().update_user(user_id=current_user.id, request_body=request_body)
 
 
